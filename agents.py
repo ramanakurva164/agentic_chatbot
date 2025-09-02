@@ -10,7 +10,7 @@ class MasterAgent:
             "weather": WeatherTool(),
             "search": WebSearchTool(),
             "calculator": CalculatorTool(),
-            "string": StringTool()
+            "string": StringTool(),
             "image": ImageGenerationTool()
         }
         self.last_agent_used = "ChatTool"
