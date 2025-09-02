@@ -1,5 +1,5 @@
 import os
-from tools import ChatTool, WeatherTool, WebSearchTool, StringTool ,CalculatorTool
+from tools import ChatTool, WeatherTool, WebSearchTool, StringTool ,CalculatorTool, ImageGenerationTool
 
 class MasterAgent:
     def __init__(self):
@@ -11,6 +11,7 @@ class MasterAgent:
             "search": WebSearchTool(),
             "calculator": CalculatorTool(),
             "string": StringTool()
+            "image": ImageGenerationTool()
         }
         self.last_agent_used = "ChatTool"
         print("✅ All agents initialized successfully!")
