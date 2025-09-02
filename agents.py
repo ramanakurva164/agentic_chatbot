@@ -42,7 +42,17 @@ class MasterAgent:
             elif any(word in query_lower for word in ["uppercase", "lowercase", "reverse", "length", "count", "capitalize", "replace", "string", "text"]):
                 self.last_agent_used = "StringTool"
                 return self.tools["string"].handle_input(query)
-            
+            elif any(word in query_lower for word in ["image", "picture", "photo", "draw", "create", "generate"]):
+                self.last_agent_used = "ImageGenerationTool"
+                result = self.tools["image"].handle_input(query)
+                if isinstance(result, dict) and result.get("type") == "image":
+                    # Return only the image path for display
+                    return {
+                        "type": "image",
+                        "image_path": result.get("image_path"),
+                        "message": result.get("message")
+                    }
+                return result
             # Default to chat
             else:
                 self.last_agent_used = "ChatTool"
