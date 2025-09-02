@@ -6,6 +6,7 @@ from datetime import datetime
 import urllib.parse
 import google.generativeai as genai
 from dotenv import load_dotenv
+import base64
 
 # Load environment variables at the module level
 load_dotenv()
@@ -147,6 +148,64 @@ Your Gemini API quota has been exceeded for today.
 
 **Other features available:**
 - Weather, Calculator, Search, String operations"""
+
+HF_MODEL_URLS = [
+    "https://api-inference.huggingface.co/models/stabilityai/stable-diffusion-2-1",
+    "https://api-inference.huggingface.co/models/CompVis/stable-diffusion-v1-4",
+    "https://api-inference.huggingface.co/models/runwayml/stable-diffusion-v1-5",
+    "https://api-inference.huggingface.co/models/stabilityai/stable-diffusion-xl-base-1.0"
+]
+HF_API_KEY = os.getenv("HF_API_KEY")
+
+class ImageGenerationTool:
+    def __init__(self):
+        self.name = "ImageGenerationTool"
+        
+    def handle_input(self, prompt: str) -> dict:
+        """
+        Generate an image from a text prompt using Hugging Face Inference API.
+        Returns a dict with type, image_path, and message.
+        """
+        if not HF_API_KEY:
+            return {"type": "error", "message": "❌ Missing Hugging Face API Key. Set HF_API_KEY in .env file"}
+
+        headers = {"Authorization": f"Bearer {HF_API_KEY}"}
+        payload = {"inputs": prompt}
+        response = None
+
+        # Try each model URL until one works
+        for i, model_url in enumerate(HF_MODEL_URLS):
+            try:
+                response = requests.post(model_url, headers=headers, json=payload, timeout=30)
+                
+                if response.status_code == 200:
+                    break  # success
+                elif response.status_code in [404, 503]:
+                    continue  # try next
+            except Exception as e:
+                print(f"❌ Exception with {model_url}: {e}")
+                continue
+
+        if response is None or response.status_code != 200:
+            return {
+                "type": "error",
+                "message": f"❌ Failed to generate image for prompt: {prompt}"
+            }
+
+        # Save image
+        os.makedirs("images", exist_ok=True)
+        timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
+        filename = f"images/generated_{timestamp}.png"
+        
+        with open(filename, "wb") as f:
+            f.write(response.content)
+
+        return {
+            "type": "image",
+            "image_path": filename,
+            "message": f"🎨 Generated image for: {prompt}"
+        }
+
 
 class WeatherTool:
     def __init__(self):
