@@ -26,7 +26,7 @@ class ChatTool:
         """Initialize the Gemini model"""
         try:
             # Get API key from environment
-            api_key = st.secrets["GEMINI_API_KEY"]
+            api_key = os.getenv("GEMINI_API_KEY", st.secrets.get("GEMINI_API_KEY"))
             
             if not api_key:
                 print("❌ GEMINI_API_KEY not found in environment variables")
@@ -156,7 +156,7 @@ HF_MODEL_URLS = [
     "https://api-inference.huggingface.co/models/runwayml/stable-diffusion-v1-5",
     "https://api-inference.huggingface.co/models/stabilityai/stable-diffusion-xl-base-1.0"
 ]
-HF_API_KEY = st.secrets["HF_API_KEY"]
+HF_API_KEY = os.getenv("HF_API_KEY", st.secrets.get("HF_API_KEY"))
 
 class ImageGenerationTool:
     def __init__(self):
