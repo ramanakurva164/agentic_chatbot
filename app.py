@@ -97,34 +97,6 @@ st.markdown("""
 .stChatMessage {
     display: none !important;
 }
-.input-container {
-    position: fixed;
-    bottom: 0;
-    left: 0;
-    right: 0;
-    background: #f8f9fa;
-    padding: 10px 20px;
-    border-top: 1px solid #ddd;
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    z-index: 1000;
-}
-.input-box {
-    flex: 1;
-}
-.send-btn {
-    background: #25d366;
-    color: white;
-    border: none;
-    padding: 8px 16px;
-    border-radius: 8px;
-    cursor: pointer;
-}
-.send-btn:hover {
-    background: #128c7e;
-}
-
 </style>
 """, unsafe_allow_html=True)
 
@@ -168,7 +140,6 @@ with st.sidebar:
     
     st.divider()
     
-    
 
 # ✅ Main chat area
 st.title("🤖 Multi-Agent Conversational Assistant")
@@ -200,28 +171,9 @@ with message_container:
                 unsafe_allow_html=True
             )
 
-# ✅ Chat input - USE FORM to prevent immediate submission
-# ✅ Fixed bottom input container
-st.markdown('<div class="input-container">', unsafe_allow_html=True)
-
-col1, col2 = st.columns([8, 1])
-
-with col1:
-    user_input = st.text_input(
-        "Message",
-        placeholder="Type your message...",
-        label_visibility="collapsed",
-        key="user_input"
-    )
-
-with col2:
-    send = st.button("➤", key="send_btn")
-
-st.markdown('</div>', unsafe_allow_html=True)
-
-# ✅ Process input
-if send and user_input and user_input.strip():
-    st.session_state.messages.append({"role": "user", "content": user_input.strip()})
+# ✅ Chat input at bottom using native Streamlit
+if user_input := st.chat_input("Say something to Ramana..."):
+    st.session_state.messages.append({"role": "user", "content": user_input})
 
     try:
         response = st.session_state.master_agent.route(user_input.strip())
@@ -232,7 +184,7 @@ if send and user_input and user_input.strip():
     st.session_state.messages.append({"role": "ai", "content": ai_reply})
     st.rerun()
 
-# ✅ Add auto-scroll script
+# ✅ Auto-scroll (optional, works with your custom bubbles)
 st.markdown("""
 <script>
 function scrollToBottom() {
