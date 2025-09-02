@@ -4,7 +4,7 @@ from agents import MasterAgent  # Update this path if MasterAgent is defined els
 import os
 import time
 from datetime import datetime
-
+from typing import Union, Dict, Any
 # ✅ Configure Streamlit
 st.set_page_config(page_title="Multi-Agent Chatbot", page_icon="🤖", layout="wide")
 
@@ -161,15 +161,31 @@ with message_container:
                 unsafe_allow_html=True
             )
         else:
-            # Bot message - aligned to left
-            st.markdown(
-                f"""
-                <div class="bot-message">
-                    <div class="bot-bubble">{msg["content"]}</div>
-                </div>
-                """,
-                unsafe_allow_html=True
-            )
+            # Bot message
+            if isinstance(msg["content"], dict) and msg["content"].get("type") == "image":
+                # Image response
+                st.markdown(
+                    f"""
+                    <div class="bot-message">
+                        <div class="bot-bubble">🖼️ {msg["content"].get("message","Generated Image")}</div>
+                    </div>
+                    """,
+                    unsafe_allow_html=True
+                )
+                image_path = msg["content"].get("image_path")
+                if image_path:
+                    st.image(image_path, use_column_width=True)
+            else:
+                # Normal text
+                st.markdown(
+                    f"""
+                    <div class="bot-message">
+                        <div class="bot-bubble">{msg["content"]}</div>
+                    </div>
+                    """,
+                    unsafe_allow_html=True
+                )
+
 
 # ✅ Chat input at bottom using native Streamlit
 if user_input := st.chat_input("Say something to Ramana..."):
@@ -177,7 +193,12 @@ if user_input := st.chat_input("Say something to Ramana..."):
 
     try:
         response = st.session_state.master_agent.route(user_input.strip())
-        ai_reply = response if response else "Sorry, I couldn't process your request."
+        if response is None:
+            ai_reply = "Sorry, I couldn't process your request. Please try again."
+        elif isinstance(response, dict) and response.get("type") == "image":
+            ai_reply = response  # keep dict so renderer knows it's an image
+        else:
+            ai_reply = str(response)
     except Exception as e:
         ai_reply = f"⚠️ Error: {str(e)}"
 
