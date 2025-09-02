@@ -162,49 +162,50 @@ class ImageGenerationTool:
         self.name = "ImageGenerationTool"
         
     def handle_input(self, prompt: str) -> dict:
-        """
-        Generate an image from a text prompt using Hugging Face Inference API.
-        Returns a dict with type, image_path, and message.
-        """
-        if not HF_API_KEY:
-            return {"type": "error", "message": "❌ Missing Hugging Face API Key. Set HF_API_KEY in .env file"}
+    if not HF_API_KEY:
+        return {"type": "error", "message": "❌ Missing Hugging Face API Key. Set HF_API_KEY in .env file"}
 
-        headers = {"Authorization": f"Bearer {HF_API_KEY}"}
-        payload = {"inputs": prompt}
-        response = None
+    headers = {"Authorization": f"Bearer {HF_API_KEY}"}
+    payload = {"inputs": prompt}
+    response = None
 
-        # Try each model URL until one works
-        for i, model_url in enumerate(HF_MODEL_URLS):
-            try:
-                response = requests.post(model_url, headers=headers, json=payload, timeout=30)
-                
-                if response.status_code == 200:
-                    break  # success
-                elif response.status_code in [404, 503]:
-                    continue  # try next
-            except Exception as e:
-                print(f"❌ Exception with {model_url}: {e}")
+    for i, model_url in enumerate(HF_MODEL_URLS):
+        try:
+            response = requests.post(model_url, headers=headers, json=payload, timeout=60)
+
+            # ✅ Check if response is image
+            if response.status_code == 200 and "image" in response.headers.get("content-type", ""):
+                break
+            elif response.status_code in [404, 503]:
                 continue
+        except Exception as e:
+            print(f"❌ Exception with {model_url}: {e}")
+            continue
 
-        if response is None or response.status_code != 200:
-            return {
-                "type": "error",
-                "message": f"❌ Failed to generate image for prompt: {prompt}"
-            }
-
-        # Save image
-        os.makedirs("images", exist_ok=True)
-        timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
-        filename = f"images/generated_{timestamp}.png"
-        
-        with open(filename, "wb") as f:
-            f.write(response.content)
-
+    if response is None or response.status_code != 200 or "image" not in response.headers.get("content-type", ""):
+        # Try to parse error
+        try:
+            err = response.json()
+        except:
+            err = response.text
         return {
-            "type": "image",
-            "image_path": filename,
-            "message": f"🎨 Generated image for: {prompt}"
+            "type": "error",
+            "message": f"❌ Failed to generate image for prompt: {prompt}\nError: {err}"
         }
+
+    # ✅ Save image safely
+    os.makedirs("images", exist_ok=True)
+    timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
+    filename = f"images/generated_{timestamp}.png"
+
+    with open(filename, "wb") as f:
+        f.write(response.content)
+
+    return {
+        "type": "image",
+        "image_path": filename,
+        "message": f"🎨 Generated image for: {prompt}"
+    }
 
 
 class WeatherTool:
