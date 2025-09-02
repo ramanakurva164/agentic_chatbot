@@ -1,0 +1,7 @@
+streamlit
+requests
+huggingface_hub
+torch
+transformers
+duckduckgo_search
+google.generativeai
