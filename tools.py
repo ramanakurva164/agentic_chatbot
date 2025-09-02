@@ -215,15 +215,15 @@ class WeatherTool:
                 print("✅ Weather data retrieved successfully!")
                 
                 return f"""🌤️ Current Weather Information:
-📍 Location: {area_name}{', ' + country if country else ''}/n
-🌡️ Temperature: {temp_c}°C ({temp_f}°F)/n
-🌡️ Feels Like: {feels_like_c}°C ({feels_like_f}°F)/n
-☁️ Condition: {description}/n
-💨 Wind: {wind_speed} km/h {wind_dir}/n
-💧 Humidity: {humidity}%/n
-👁️ Visibility: {visibility} km/n
-🌪️ Pressure: {pressure} mb/n
-🕐 Updated: {datetime.now().strftime('%Y-%m-%d %H:%M')}/n
+📍 Location: {area_name}{', ' + country if country else ''}\n
+🌡️ Temperature: {temp_c}°C ({temp_f}°F)\n
+🌡️ Feels Like: {feels_like_c}°C ({feels_like_f}°F)\n
+☁️ Condition: {description}\n
+💨 Wind: {wind_speed} km/h {wind_dir}\n
+💧 Humidity: {humidity}%\n
+👁️ Visibility: {visibility} km\n
+🌪️ Pressure: {pressure} mb\n
+🕐 Updated: {datetime.now().strftime('%Y-%m-%d %H:%M')}\n
 """
             
             elif response.status_code == 404:
