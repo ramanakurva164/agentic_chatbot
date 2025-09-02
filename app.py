@@ -174,7 +174,7 @@ with message_container:
                 )
                 image_path = msg["content"].get("image_path")
                 if image_path:
-                    st.image(image_path, use_column_width=True)
+                    st.image(image_path, use_container_width=True)
             else:
                 # Normal text
                 st.markdown(
