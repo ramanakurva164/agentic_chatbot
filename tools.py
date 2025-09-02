@@ -214,7 +214,7 @@ class WeatherTool:
                 
                 print("✅ Weather data retrieved successfully!")
                 
-                return f"🌤️ Current Weather Information:
+                return f"""🌤️ Current Weather Information:
 📍 Location: {area_name}{', ' + country if country else ''}\n
 🌡️ Temperature: {temp_c}°C ({temp_f}°F)\n
 🌡️ Feels Like: {feels_like_c}°C ({feels_like_f}°F)\n
@@ -224,7 +224,7 @@ class WeatherTool:
 👁️ Visibility: {visibility} km\n
 🌪️ Pressure: {pressure} mb\n
 🕐 Updated: {datetime.now().strftime('%Y-%m-%d %H:%M')}\n
-"
+"""
             
             elif response.status_code == 404:
                 return f"❌ City '{city}' not found. Please check the spelling and try again."
