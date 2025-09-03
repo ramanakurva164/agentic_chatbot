@@ -1,4 +1,5 @@
 import os
+import re
 from tools import ChatTool, WeatherTool, WebSearchTool, StringTool ,CalculatorTool, ImageGenerationTool
 
 class MasterAgent:
@@ -30,7 +31,7 @@ class MasterAgent:
                 return self.tools["weather"].handle_input(query)
             
             # Search routing
-            elif any(word in query_lower for word in ["search", "find", "look up", "google", "duckduckgo"]):
+            elif any(re.search(rf"\b{word}\b", query_lower) for word in ["search", "find", "lookup", "google", "duckduckgo"]):
                 self.last_agent_used = "WebSearchTool"
                 return self.tools["search"].handle_input(query)
             
