@@ -7,12 +7,74 @@ import urllib.parse
 import google.generativeai as genai
 from dotenv import load_dotenv
 import base64
+from transformers import pipeline, AutoTokenizer
 import streamlit as st
 
 # Load environment variables at the module level
 load_dotenv()
 
 
+
+class NLPTool:
+    def __init__(self):
+        print("🧠 Initializing NLP Tool with Hugging Face models...")
+
+        # Load Hugging Face pipelines
+        self.summarizer = pipeline("summarization", model="facebook/bart-large-cnn")
+        self.sentiment_analyzer = pipeline("sentiment-analysis")
+        self.translator = pipeline("translation_en_to_fr", model="Helsinki-NLP/opus-mt-en-fr")
+        self.ner = pipeline("ner", model="dslim/bert-base-NER", aggregation_strategy="simple")
+        self.tokenizer = AutoTokenizer.from_pretrained("bert-base-uncased")
+
+        print("✅ NLP Tool ready!")
+
+    def handle_input(self, query: str):
+        query_lower = query.lower()
+
+        try:
+            if query_lower.startswith("summarize"):
+                text = query.replace("summarize", "", 1).strip()
+                result = self.summarizer(text, max_length=100, min_length=20, do_sample=False)
+                return result[0]['summary_text']
+
+            elif query_lower.startswith("sentiment"):
+                text = query.replace("sentiment", "", 1).strip()
+                result = self.sentiment_analyzer(text)
+                return f"Sentiment: {result[0]['label']} (score: {result[0]['score']:.2f})"
+
+            elif query_lower.startswith("translate"):
+                text = query.replace("translate", "", 1).strip()
+                result = self.translator(text)
+                return f"French Translation: {result[0]['translation_text']}"
+
+            elif query_lower.startswith("entities") or query_lower.startswith("extract"):
+                text = query.replace("entities", "", 1).replace("extract", "", 1).strip()
+                result = self.ner(text)
+                return [{"entity": r['entity_group'], "word": r['word'], "score": round(r['score'], 2)} for r in result]
+
+            elif query_lower.startswith("tokenize"):
+                text = query.replace("tokenize", "", 1).strip()
+                tokens = self.tokenizer.tokenize(text)
+                return tokens
+
+            elif query_lower.startswith("keywords"):
+                text = query.replace("keywords", "", 1).strip()
+                # Very simple keyword extraction: top N tokens
+                tokens = self.tokenizer.tokenize(text)
+                keywords = list(set([t for t in tokens if t.isalpha()]))
+                return keywords[:10]
+
+            elif query_lower.startswith("paraphrase") or query_lower.startswith("nlp"):
+                # For simplicity, reuse summarizer as paraphraser
+                text = query.replace("paraphrase", "", 1).replace("nlp", "", 1).strip()
+                result = self.summarizer(text, max_length=100, min_length=20, do_sample=True)
+                return f"Paraphrased: {result[0]['summary_text']}"
+
+            else:
+                return "❌ NLPTool: Unknown NLP command. Try one of: summarize, sentiment, translate, extract, tokenize, entities, keywords, paraphrase."
+
+        except Exception as e:
+            return f"⚠️ NLPTool error: {str(e)}"
 
 
 
