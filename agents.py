@@ -28,10 +28,24 @@ class MasterAgent:
             query_lower = query.lower()
             #startswith nlp names
             
+            
             # Weather routing - more specific patterns
             if any(word in query_lower for word in ["weather", "temperature", "forecast", "climate", "rain", "sunny", "cloudy", "humidity", "wind"]):
                 self.last_agent_used = "WeatherTool"
                 return self.tools["weather"].handle_input(query)
+            elif query_lower.startswith((
+                "summarize", 
+                "extract", 
+                "tokenize", 
+                "sentiment", 
+                "translate", 
+                "nlp", 
+                "entities", 
+                "keywords", 
+                "paraphrase"
+            )):
+                self.last_agent_used = "NLPTool"
+                return self.tools["nlp"].handle_input(query)
             
             # Search routing - more specific patterns to avoid false positives
             elif any(re.search(rf"\b{word}\b", query_lower) for word in ["search for", "find information", "lookup", "google", "duckduckgo"]) or \
