@@ -15,7 +15,7 @@ load_dotenv()
 
 
 
-class NLPTool:
+class NlpTool:
     def __init__(self):
         print("🧠 Initializing NLP Tool with Hugging Face models...")
 
