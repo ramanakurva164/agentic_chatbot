@@ -5,4 +5,5 @@ torch
 transformers
 duckduckgo_search
 google.generativeai
+sentencepiece
 python-dotenv
