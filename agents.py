@@ -25,26 +25,32 @@ class MasterAgent:
                 
             query_lower = query.lower()
             
-            # Weather routing
-            if any(word in query_lower for word in ["weather", "temperature", "forecast", "climate", "rain", "sunny", "cloudy"]):
+            # Weather routing - more specific patterns
+            if any(word in query_lower for word in ["weather", "temperature", "forecast", "climate", "rain", "sunny", "cloudy", "humidity", "wind"]):
                 self.last_agent_used = "WeatherTool"
                 return self.tools["weather"].handle_input(query)
             
-            # Search routing
-            elif any(re.search(rf"^{word}\b", query_lower) for word in ["search", "find", "lookup", "google", "duckduckgo"]):
+            # Search routing - more specific patterns to avoid false positives
+            elif any(re.search(rf"\b{word}\b", query_lower) for word in ["search for", "find information", "lookup", "google", "duckduckgo"]) or \
+                 query_lower.startswith(("search ", "find ", "lookup ")):
                 self.last_agent_used = "WebSearchTool"
                 return self.tools["search"].handle_input(query)
             
-            # Calculator routing
-            elif any(word in query_lower for word in ["calculate", "math", "solve", "equation", "+", "-", "*", "/", "=", "factorial", "square root", "sqrt", "sin", "cos", "tan", "log", "power", "^"]):
+            # Calculator routing - more specific math patterns
+            elif any(word in query_lower for word in ["calculate", "math", "solve", "equation", "factorial", "square root", "sqrt", "sin", "cos", "tan", "log", "power"]) or \
+                 re.search(r'[\d\+\-\*\/\=\^\(\)]+', query_lower):
                 self.last_agent_used = "CalculatorTool"
                 return self.tools["calculator"].handle_input(query)
             
-            # String operations routing
-            elif any(word in query_lower for word in ["uppercase", "lowercase", "reverse", "length", "count", "capitalize", "replace", "string", "text"]):
+            # String operations routing - more specific patterns
+            elif any(re.search(rf"\b{word}\b", query_lower) for word in ["uppercase", "lowercase", "reverse string", "string length", "count characters", "capitalize", "replace text"]) or \
+                 query_lower.startswith(("make uppercase", "make lowercase", "reverse ", "count ", "replace ")):
                 self.last_agent_used = "StringTool"
                 return self.tools["string"].handle_input(query)
-            elif any(word in query_lower for word in ["image", "picture", "photo", "draw", "create", "generate"]):
+            
+            # Image generation routing - more specific patterns
+            elif any(re.search(rf"\b{word}\b", query_lower) for word in ["generate image", "create image", "draw picture", "make picture"]) or \
+                 query_lower.startswith(("generate ", "create ", "draw ", "make ")):
                 self.last_agent_used = "ImageGenerationTool"
                 result = self.tools["image"].handle_input(query)
                 if isinstance(result, dict) and result.get("type") == "image":
@@ -55,7 +61,8 @@ class MasterAgent:
                         "message": result.get("message")
                     }
                 return result
-            # Default to chat
+            
+            # Default to chat for general conversation
             else:
                 self.last_agent_used = "ChatTool"
                 return self.tools["chat"].handle_input(query)
