@@ -1,6 +1,6 @@
 import os
 import re
-from tools import ChatTool, WeatherTool, WebSearchTool, StringTool ,CalculatorTool, ImageGenerationTool
+from tools import ChatTool, WeatherTool, WebSearchTool, StringTool ,CalculatorTool, ImageGenerationTool ,NlpTool
 
 class MasterAgent:
     def __init__(self):
@@ -12,7 +12,9 @@ class MasterAgent:
             "search": WebSearchTool(),
             "calculator": CalculatorTool(),
             "string": StringTool(),
-            "image": ImageGenerationTool()
+            "image": ImageGenerationTool(),
+            "nlp":NlpTool()
+            
         }
         self.last_agent_used = "ChatTool"
         print("✅ All agents initialized successfully!")
@@ -24,6 +26,7 @@ class MasterAgent:
                 return "Please provide a valid question."
                 
             query_lower = query.lower()
+            #startswith nlp names
             
             # Weather routing - more specific patterns
             if any(word in query_lower for word in ["weather", "temperature", "forecast", "climate", "rain", "sunny", "cloudy", "humidity", "wind"]):
