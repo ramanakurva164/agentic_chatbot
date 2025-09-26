@@ -100,12 +100,7 @@ class ChatTool:
             
             # Try different model names (Google has updated their models)
             model_names = [
-                'gemini-1.5-flash',
-                'gemini-1.5-pro', 
-                'gemini-1.0-pro',
-                'models/gemini-1.5-flash',
-                'models/gemini-1.5-pro',
-                'models/gemini-1.0-pro'
+                "gemini-2.5-flash"
             ]
             
             for model_name in model_names:
