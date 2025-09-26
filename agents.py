@@ -27,19 +27,21 @@ class MasterAgent:
             query_lower = query.lower()
 
             # NLP routing - must come before weather
-            nlp_keywords = ["summarize", "extract", "tokenize", "sentiment","translate", "nlp", "entities", "keywords", "paraphrase"]
-
-# Check if query starts with any NLP keyword (case-insensitive)
+            nlp_keywords = [
+                "summarize", "extract", "tokenize", "sentiment",
+                "translate", "nlp", "entities", "keywords", "paraphrase"
+            ]
             if any(query_lower.startswith(k) or query_lower.startswith(k + ":") for k in nlp_keywords):
                 self.last_agent_used = "NLPTool"
                 return self.tools["nlp"].handle_input(query)
-                        # Weather routing
-                        elif any(word in query_lower for word in [
-                            "weather", "temperature", "forecast", "climate", 
-                            "rain", "sunny", "cloudy", "humidity", "wind"
-                        ]):
-                            self.last_agent_used = "WeatherTool"
-                            return self.tools["weather"].handle_input(query)
+
+            # Weather routing
+            elif any(word in query_lower for word in [
+                "weather", "temperature", "forecast", "climate", 
+                "rain", "sunny", "cloudy", "humidity", "wind"
+            ]):
+                self.last_agent_used = "WeatherTool"
+                return self.tools["weather"].handle_input(query)
 
             # Search routing
             elif any(re.search(rf"\b{word}\b", query_lower) 
