@@ -92,23 +92,4 @@ class MasterAgent:
         """Alternative method name for compatibility"""
         return self.route(query)
 
-    def get_available_tools(self):
-        """Get list of available tools"""
-        return list(self.tools.keys())
     
-    def get_last_agent(self):
-        """Get the name of the last agent used"""
-        return self.last_agent_used
-    
-    def add_tool(self, name, tool_instance):
-        """Add a new tool to the system"""
-        self.tools[name] = tool_instance
-        print(f"✅ Added new tool: {name}")
-    
-    def remove_tool(self, name):
-        """Remove a tool from the system"""
-        if name in self.tools:
-            del self.tools[name]
-            print(f"🗑️ Removed tool: {name}")
-        else:
-            print(f"❌ Tool '{name}' not found")
