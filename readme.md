@@ -1,6 +1,6 @@
-# 🤖 Multi-Agent Conversational Assistant
+# 🤖 Agentic Conversational Assistant
 
-A powerful Python-based multi-agent system with a Streamlit web interface that intelligently routes user queries to specialized agents for different tasks.
+A powerful Python-based agent system with a Streamlit web interface that intelligently routes user queries to specialized agents for different tasks.
 
 ## 🚀 Features
 
@@ -50,7 +50,7 @@ multi_agent/
 
 1. **Clone the repository:**
 ```bash
-git clone https://github.com/ramanakurva164/multi_agent.git
+git clone https://github.com/ramanakurva164/agentic_chatbot.git
 cd multi_agent
 ```
 
@@ -213,7 +213,7 @@ python debug_env.py
 ## 📞 Support
 
 - **Author**: ramanakurva164
-- **Repository**: [multi_agent](https://github.com/ramanakurva164/multi_agent)
+- **Repository**: [multi_agent](https://github.com/ramanakurva164/agentic_chatbot)
 - **Issues**: Report bugs via GitHub Issues
 
 ## 📄 License
